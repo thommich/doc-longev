@@ -1,0 +1,108 @@
+.badge {
+  --badge-color: var(--ifm-color-emphasis-800);
+  --badge-bg: var(--ifm-color-emphasis-200);
+  --badge-border: var(--ifm-color-emphasis-300);
+
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  max-width: 100%;
+  border: 1px solid var(--badge-border);
+  border-radius: 0.375rem;
+  background: var(--badge-bg);
+  color: var(--badge-color);
+  font-weight: 650;
+  line-height: 1;
+  vertical-align: 0.08em;
+  white-space: nowrap;
+}
+
+.sm {
+  padding: 0.2rem 0.4rem;
+  font-size: 0.7rem;
+}
+
+.md {
+  padding: 0.275rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.lg {
+  padding: 0.375rem 0.625rem;
+  font-size: 0.95rem;
+}
+
+.pill {
+  border-radius: 999px;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.icon > svg {
+  width: 1em;
+  height: 1em;
+}
+
+.dot {
+  width: 0.5em;
+  height: 0.5em;
+  border-radius: 50%;
+  background: currentColor;
+  flex: 0 0 auto;
+}
+
+.info {
+  --badge-color: var(--ifm-color-info-darkest);
+  --badge-bg: color-mix(in srgb, var(--ifm-color-info) 14%, transparent);
+  --badge-border: color-mix(in srgb, var(--ifm-color-info) 32%, transparent);
+}
+
+.success {
+  --badge-color: var(--ifm-color-success-darkest);
+  --badge-bg: color-mix(in srgb, var(--ifm-color-success) 14%, transparent);
+  --badge-border: color-mix(in srgb, var(--ifm-color-success) 32%, transparent);
+}
+
+.warning {
+  --badge-color: #7a4d00;
+  --badge-bg: color-mix(in srgb, var(--ifm-color-warning) 18%, transparent);
+  --badge-border: color-mix(in srgb, var(--ifm-color-warning) 42%, transparent);
+}
+
+.danger {
+  --badge-color: var(--ifm-color-danger-darkest);
+  --badge-bg: color-mix(in srgb, var(--ifm-color-danger) 14%, transparent);
+  --badge-border: color-mix(in srgb, var(--ifm-color-danger) 32%, transparent);
+}
+
+.purple {
+  --badge-color: #6d28d9;
+  --badge-bg: rgb(139 92 246 / 12%);
+  --badge-border: rgb(139 92 246 / 32%);
+}
+
+[data-theme='dark'] .badge {
+  --badge-color: var(--ifm-color-emphasis-800);
+  --badge-bg: var(--ifm-color-emphasis-200);
+  --badge-border: var(--ifm-color-emphasis-400);
+}
+
+[data-theme='dark'] .info,
+[data-theme='dark'] .success,
+[data-theme='dark'] .warning,
+[data-theme='dark'] .danger {
+  --badge-color: var(--ifm-color-emphasis-900);
+}
+
+[data-theme='dark'] .purple {
+  --badge-color: #c4b5fd;
+}
+
+@media (forced-colors: active) {
+  .badge {
+    border-color: CanvasText;
+  }
+}

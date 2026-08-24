@@ -1,0 +1,31 @@
+---
+title: Badges
+description: Examples of the reusable Badge component.
+---
+
+import Badge from '@site/src/components/Badge';
+
+# Badges
+
+Use badges for short labels, states, versions, and metadata. Do not use them as
+buttons; use a link or button component when the element performs an action.
+
+## Variants
+
+<Badge>Default</Badge>{' '}
+<Badge variant="info">Beta</Badge>{' '}
+<Badge variant="success">Stable</Badge>{' '}
+<Badge variant="warning">Deprecated</Badge>{' '}
+<Badge variant="danger">Breaking</Badge>{' '}
+<Badge variant="purple">Experimental</Badge>
+
+## Sizes and shapes
+
+<Badge size="sm">Small</Badge>{' '}
+<Badge size="md" pill>Medium pill</Badge>{' '}
+<Badge size="lg" dot variant="success">Operational</Badge>
+
+Badges also work inline: Requires Docusaurus <Badge variant="info">v3+</Badge>.
+
+If `Badge` is registered globally through `src/theme/MDXComponents.tsx`, remove
+the import at the top of this file and use it in any MDX document directly.
