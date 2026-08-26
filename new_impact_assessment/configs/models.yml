@@ -1,0 +1,46 @@
+# Model registry. One entry per model, keyed by name.
+models:
+  bordo:
+    display_name: "BORDÔ"
+    pkl_path: app/src/meridiancrediariobordo/artifacts/lgbm_bordo_final_v2.pkl
+    flat_table:
+      engine: teradata
+      name: MEBM_V.VDC6M1391_PF_CRED_CSS_BORDO
+    id_cols: [pk_riznumdoc_xx, pk_datref_xx]
+    aux_cols: [anomesdia, pk_tpp_xx, safra]
+    score_col: score
+    gh_col: gh
+    # 12 GH bands (13 cut points), from the notebooks.
+    cutpoints_gh:
+      - 0
+      - 0.015150000000000004
+      - 0.02525
+      - 0.035125
+      - 0.04460000000000001
+      - 0.05685000000000001
+      - 0.07300000000000002
+      - 0.09612500000000003
+      - 0.11256250000000004
+      - 0.13440000000000007
+      - 0.16386250000000008
+      - 0.23737500000000017
+      - 1
+    populations:
+      corrs_ativos:
+        display_name: "CORRS ATIVOS"
+      contratos_itau:
+        display_name: "CONTRATOS ITAÚ"
+        target_col: target_60_m6   # matured references (membership = target not null)
+        flag_col: cntrt_itau       # recent references (membership = flag == 1)
+    metadata:
+      # Athena table used to derive the recent-reference contract flag.
+      contratacao_recente_table: db_corp_relatorioseregulatorios_crediario_spec_01.tbhm8_contratacao_crediario
+      publicos:
+        - "- CORRS ATIVOS: Correntistas ativos (TRIAD) e cartonistas ativos"
+        - "- CONTRATOS ITAÚ: Contratos de Crediário na safra de referência"
+      referencias:
+        - "- REF ANTIGA (10/10/2025): referência com performance já maturada; traz uma visão de possíveis impactos nas métricas de performance do modelo dada a alteração do Book"
+        - "- REF RECENTE (07/07/2026): referência mais atual; traz uma visão de possíveis impactos que as métricas do modelo produtivo devem sofrer com a alteração do Book"
+      observacoes:
+        - "- O conceito de \"mau\" utilizado nas análises de performance se refere ao indicador 60m6"
+        - "- O público \"CONTRATOS ITAÚ\" foi deduplicado priorizando o contrato de pior performance no caso de mais de um contrato na mesma referência"

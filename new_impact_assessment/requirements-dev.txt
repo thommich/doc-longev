@@ -1,0 +1,5 @@
+-r requirements.inferred.txt
+ipykernel
+nbclient
+nbformat
+pytest

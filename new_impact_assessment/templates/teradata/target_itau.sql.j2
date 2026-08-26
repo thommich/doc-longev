@@ -1,0 +1,43 @@
+-- Build the Itaú contract population with matured performance labels
+-- (mau_na_origem60 / target_60_m6) from the Foucault views.
+-- Params: out_table, flat_table, ref_date, contratacao_view, pd_itau_view,
+--         contratacao_familias (list), pd_familias (list)
+CREATE TABLE {{ out_table }} AS (
+WITH PUB AS (
+    SELECT PK_RIZNUMDOC_XX
+          ,PK_TPP_XX
+          ,PK_DATREF_XX
+          ,EXTRACT(YEAR FROM PK_DATREF_XX)*100 + EXTRACT(MONTH FROM PK_DATREF_XX) AS SAFRA
+          ,EXTRACT(YEAR FROM PK_DATREF_XX)*10000 + EXTRACT(MONTH FROM PK_DATREF_XX)*100
+             + EXTRACT(DAY FROM PK_DATREF_XX) AS ANOMESDIA
+    FROM {{ flat_table }} WHERE PK_DATREF_XX = DATE'{{ ref_date }}'
+), tms_pub_cred_ctrt_it AS (
+    SELECT a.*, b.cntrt, b.pk_numcntrt_xx
+    FROM PUB AS a
+    LEFT JOIN (
+        SELECT D.*, 'IT' AS cntrt
+        FROM {{ contratacao_view }} AS D
+        WHERE familia IN ({% for f in contratacao_familias %}'{{ f }}'{% if not loop.last %}, {% endif %}{% endfor %})
+    ) AS b
+      ON a.pk_riznumdoc_xx = b.pk_riznumdoc_xx
+     AND a.safra = year(b.pk_datref_cntrtc)*100 + month(b.pk_datref_cntrtc)
+), tms_pub_cred_pd_it AS (
+    SELECT a.*, b.EVER_FSC_ITAU_60_M0, b.EVER_FSC_ITAU_60_M6
+    FROM tms_pub_cred_ctrt_it AS a
+    LEFT JOIN (
+        SELECT * FROM {{ pd_itau_view }}
+        WHERE pk_tpp_xx = 'F'
+          AND TRIM(dsc_familia_itau) IN ({% for f in pd_familias %}'{{ f }}'{% if not loop.last %}, {% endif %}{% endfor %})
+          AND FLG_CNTRT_FTR = 0
+    ) AS b
+      ON a.pk_riznumdoc_xx = b.pk_riznumdoc_xx
+     AND a.pk_numcntrt_xx = b.pk_numcntrt_xx
+     AND a.safra = b.ref_mau_origem
+)
+SELECT DISTINCT
+       a.pk_riznumdoc_xx, a.pk_tpp_xx, a.pk_datref_xx, a.safra, a.anomesdia,
+       a.pk_numcntrt_xx, a.cntrt,
+       a.EVER_FSC_ITAU_60_M0 AS mau_na_origem60,
+       a.EVER_FSC_ITAU_60_M6 AS target_60_m6
+FROM tms_pub_cred_pd_it AS a
+) WITH DATA PRIMARY INDEX (pk_riznumdoc_xx, safra)

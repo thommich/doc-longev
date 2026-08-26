@@ -1,0 +1,32 @@
+# Migration registry. One entry per legacy -> new source substitution.
+# `feature_suffix` drives automatic feature resolution: the substituted features
+# are the model's scoring features whose name contains the suffix. Provide
+# `feature_names` instead to pin an explicit list/order.
+migrations:
+  faturas_ft:
+    display_name: "FATURAS"
+    feature_suffix: "_ft"
+    new_source:
+      engine: athena
+      table: workspace_db.tbdc6b_book_faturas_limited_v2
+      join_strategy: nearest_date
+    # Optional: analyses discover unique values from this column. `values`
+    # pins the display order for this migration; omit it for automatic order.
+    segmentation:
+      column: PLATAFORMA
+      display_name: "PLATAFORMA"
+      values: [VQ, NPC, "VQ|NPC"]
+      include_null: true
+
+  autorizacoes_au:
+    display_name: "AUTORIZAÇÕES"
+    feature_suffix: "_au"
+    new_source:
+      engine: athena
+      table: workspace_db.tbdc6b_book_autorizacoes_limited_v2
+      join_strategy: nearest_date
+    segmentation:
+      column: PLATAFORMA
+      display_name: "PLATAFORMA"
+      values: [VQ, NPC, "VQ|NPC"]
+      include_null: true

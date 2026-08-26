@@ -1,0 +1,17 @@
+# Inferred from imports in recovered screenshots; the original requirements.txt
+# was visible in the file tree but was never opened.
+awswrangler
+jinja2
+joblib
+numpy
+openpyxl
+pandas
+pyarrow
+PyYAML
+scikit-learn
+
+# Project-internal/runtime dependencies referenced by the source:
+# MLTools
+# auto_gh
+# build_slim_cast
+# app.src.credentials

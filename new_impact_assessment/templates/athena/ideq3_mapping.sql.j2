@@ -1,0 +1,16 @@
+-- Map CPF (pk_riznumdoc_xx) -> cod_idef_pess via the latest TBEQ3 snapshot.
+-- Params: out_table, pub_table, tbeq3_table
+CREATE TABLE {{ out_table }} AS
+SELECT DISTINCT
+       A.PK_RIZNUMDOC_XX
+      ,A.ANOMESDIA
+      ,A.PK_DATREF_XX
+      ,TRIM(A.PK_TPP_XX) AS PK_TPP_XX
+      ,TRIM(B.COD_IDEF_PESS) AS COD_IDEF_PESS
+FROM {{ pub_table }} AS A
+LEFT JOIN (
+    SELECT FLOOR(TRY_CAST(num_docm_pess AS BIGINT) / 100) AS num_cpf_cnpj, cod_idef_pess
+    FROM {{ tbeq3_table }}
+    WHERE ano_mes_dia = (SELECT MAX(ano_mes_dia) FROM {{ tbeq3_table }})
+) AS B
+  ON A.PK_RIZNUMDOC_XX = B.NUM_CPF_CNPJ

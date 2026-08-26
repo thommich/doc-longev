@@ -1,0 +1,12 @@
+-- Recent Itaú-contract flag (no matured performance yet): mark clients present
+-- in the current-safra Crediário contract base.
+-- Params: out_table, pub_table, contratacao_table, ref_date (ISO yyyy-mm-dd)
+CREATE TABLE {{ out_table }} AS
+SELECT DISTINCT
+       A.PK_RIZNUMDOC_XX
+      ,A.PK_DATREF_XX
+      ,1 AS cntrt_itau
+FROM {{ pub_table }} AS A
+INNER JOIN {{ contratacao_table }} AS B
+  ON A.PK_RIZNUMDOC_XX = B.PK_RIZNUMDOC_XX
+WHERE B.PK_DATREF_XX = DATE'{{ ref_date }}'

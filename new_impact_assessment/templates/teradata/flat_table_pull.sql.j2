@@ -1,0 +1,5 @@
+-- Scored model flat table for one reference date (streamed to parquet).
+-- Params: flat_table, ref_date (ISO yyyy-mm-dd)
+SELECT *
+FROM {{ flat_table }}
+WHERE PK_DATREF_XX = DATE'{{ ref_date }}'

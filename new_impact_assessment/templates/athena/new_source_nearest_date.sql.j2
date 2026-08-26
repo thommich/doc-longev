@@ -1,0 +1,41 @@
+-- Recompute substituted features from the new source, joined to each client by
+-- the nearest available snapshot date (ABS(anomesdia - pk_datref_xx)).
+-- Params: out_table, ideq3_table, new_source_table, features (list),
+--         segmentation_col (optional)
+CREATE TABLE {{ out_table }} AS
+WITH ranked_joins AS (
+    SELECT DISTINCT
+           A.PK_RIZNUMDOC_XX
+          ,A.ANOMESDIA
+          ,A.PK_TPP_XX
+          ,A.COD_IDEF_PESS
+          ,A.PK_DATREF_XX
+          ,ABS(A.anomesdia - B.pk_datref_xx) AS date_difference
+          ,ROW_NUMBER() OVER (
+              PARTITION BY A.PK_RIZNUMDOC_XX, A.ANOMESDIA
+              ORDER BY ABS(ABS(A.anomesdia - B.pk_datref_xx)) ASC
+          ) AS rank_order
+          {% for f in features %}
+          ,B.{{ f }}
+          {% endfor %}
+          {% if segmentation_col %}
+          ,B.{{ segmentation_col }}
+          {% endif %}
+    FROM {{ ideq3_table }} AS A
+    LEFT JOIN {{ new_source_table }} AS B
+      ON A.PK_RIZNUMDOC_XX = B.PK_RIZNUMDOC_XX
+)
+SELECT DISTINCT
+       PK_RIZNUMDOC_XX
+      ,ANOMESDIA
+      ,PK_TPP_XX
+      ,COD_IDEF_PESS
+      ,PK_DATREF_XX
+      {% for f in features %}
+      ,{{ f }}
+      {% endfor %}
+      {% if segmentation_col %}
+      ,{{ segmentation_col }}
+      {% endif %}
+FROM ranked_joins
+WHERE rank_order = 1

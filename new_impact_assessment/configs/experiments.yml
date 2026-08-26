@@ -1,0 +1,42 @@
+# Experiment registry. Each experiment produces one report sheet.
+# References: `antiga` is matured (has target -> performance/Gini), `recente` is
+# the most current reference (no target -> no performance block).
+_common_references: &bordo_refs
+  antiga:
+    label: "REF ANTIGA (10/10/2025)"
+    date: "2025-10-10"
+    anomesdia: 20251010
+    include_target: true
+    parquet: s3://itau-self-wkp-sa-east-1-635985251289/thommic/avaliacao_subst_features_modelos/bordo/bordo_ref_antiga_20251010/bordo_20251010.parquet
+  recente:
+    label: "REF RECENTE (07/07/2026)"
+    date: "2026-07-07"
+    anomesdia: 20260707
+    include_target: false
+    parquet: s3://itau-self-wkp-sa-east-1-635985251289/thommic/avaliacao_subst_features_modelos/bordo/bordo_ref_recente_20260707/bordo_20260707.parquet
+
+experiments:
+  bordo_faturas:
+    model: bordo
+    migrations: [faturas_ft]
+    report_sheet: "BORDÔ - FATURAS"
+    references: *bordo_refs
+    populations: [corrs_ativos, contratos_itau]
+    analyses: [score_gh_match, gh_migration_matrix, performance_gini, per_variable_drift, feature_migration_matrix]
+
+  bordo_autorizacoes:
+    model: bordo
+    migrations: [autorizacoes_au]
+    report_sheet: "BORDÔ - AUTORIZAÇÕES"
+    references: *bordo_refs
+    populations: [corrs_ativos, contratos_itau]
+    analyses: [score_gh_match, gh_migration_matrix, performance_gini, per_variable_drift, feature_migration_matrix]
+
+  bordo_ft_au:
+    model: bordo
+    migrations: [faturas_ft, autorizacoes_au]
+    report_sheet: "BORDÔ - FT + AU"
+    references: *bordo_refs
+    populations: [corrs_ativos, contratos_itau]
+    # combined variant: no per-variable panel (matches v6)
+    analyses: [score_gh_match, gh_migration_matrix, performance_gini, feature_migration_matrix]
